@@ -19,7 +19,7 @@
         <td>{{room}}</td>
 <!--        <td>{{#phone}}{{phone}}{{/phone}}{{^phone}}&mdash;{{/phone}}</td>-->
         <td>
-            <form action="update.php" method="get" style="display: inline-block">
+            <form action="update.php" method="get" style="display: inline-block"> <!-- TODO potreba admin prava k editaci a delete -->
                 <input type="hidden" name="employeeId" value="{{employee_id}}">
                 <input type="submit" value="Upravit" class="btn btn-info">
             </form>

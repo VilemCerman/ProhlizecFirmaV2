@@ -1,9 +1,9 @@
 <?php
 require_once __DIR__ . "/../../bootstrap/bootstrap.php";
 
-class RoomUpdatePage extends CRUDPage
+class EmployeeUpdatePage extends CRUDPage
 {
-    private ?Room $room;
+    private ?Employee $employee;
     private ?array $errors = [];
     private int $state;
 
@@ -11,18 +11,18 @@ class RoomUpdatePage extends CRUDPage
     {
         parent::prepare();
         $this->findState();
-        $this->title = "Upravit místnost";
+        $this->title = "Upravit zaměstnance";
 
         //když chce formulář
         if ($this->state === self::STATE_FORM_REQUESTED)
         {
-            $roomId = filter_input(INPUT_GET, 'roomId', FILTER_VALIDATE_INT);
-            if (!$roomId)
+            $employeeId = filter_input(INPUT_GET, 'employeeId', FILTER_VALIDATE_INT);
+            if (!$employeeId)
                 throw new BadRequestException();
 
             //jdi dál
-            $this->room = Room::findByID($roomId);
-            if (!$this->room)
+            $this->employee = Employee::findByID($employeeId);
+            if (!$this->employee)
                 throw new NotFoundException();
 
         }
@@ -30,11 +30,11 @@ class RoomUpdatePage extends CRUDPage
         //když poslal data
         elseif($this->state === self::STATE_DATA_SENT) {
             //načti je
-            $this->room = Room::readPost();
+            $this->employee = Employee::readPost();
 
             //zkontroluj je, jinak formulář
             $this->errors = [];
-            $isOk = $this->room->validate($this->errors);
+            $isOk = $this->employee->validate($this->errors);
             if (!$isOk)
             {
                 $this->state = self::STATE_FORM_REQUESTED;
@@ -42,7 +42,7 @@ class RoomUpdatePage extends CRUDPage
             else
             {
                 //ulož je
-               $success = $this->room->update();
+               $success = $this->employee->update();
 
                 //přesměruj
                $this->redirect(self::ACTION_UPDATE, $success);
@@ -53,9 +53,9 @@ class RoomUpdatePage extends CRUDPage
     protected function pageBody()
     {
         return MustacheProvider::get()->render(
-            'roomForm',
+            'employeeForm',
             [
-                'room' => $this->room,
+                'employee' => $this->employee,
                 'errors' => $this->errors
             ]
         );
@@ -71,7 +71,7 @@ class RoomUpdatePage extends CRUDPage
 
 }
 
-$page = new RoomUpdatePage();
+$page = new EmployeeUpdatePage();
 $page->render();
 
 ?>

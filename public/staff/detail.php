@@ -26,7 +26,7 @@ class EmployeeDetailPage extends BasePage
         $this->room = $stmt->fetch();
 
         //klíče
-        $stmt = PDOProvider::get()->prepare("SELECT key.key_id, `room` FROM `key` WHERE `employee`= :employeeId");
+        $stmt = PDOProvider::get()->prepare("SELECT `key`.key_id AS key_id, `key`.room AS room_id, `room`.name AS room_name FROM `key` INNER JOIN `room` ON `key`.employee = :employeeId AND `key`.room = `room`.room_id");
         $stmt->execute(['employeeId' => $employeeId]);
         $this->keys = $stmt->fetchAll();
 
