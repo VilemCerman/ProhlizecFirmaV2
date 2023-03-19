@@ -3,37 +3,45 @@ require_once __DIR__ . "/../bootstrap/bootstrap.php";
 
 class LoginPage extends BasePage
 {
+    protected ?string $login = null;
+    protected ?string $pass = null;
     public function __construct()
     {
+        $this->login = filter_input(INPUT_POST,'login');
+        $this->pass = filter_input(INPUT_POST,'password');
+
+        if($this->login !== null && $this->pass !== null){
+            $stmt = PDOProvider::get()->prepare("SELECT login, password AS pass FROM employee WHERE login = :userLogin");
+            $stmt->execute(['userLogin' => $this->login]);
+            $user = $stmt->fetch();
+            //if($user['login'] === $this->login && password_verify($this->pass,$user['hash'])){
+
+            if($this->pass === $user->pass){
+                session_start();
+                $_SESSION['user'] = $user->login;
+                var_dump($user->login);
+                header("Location: index.php");
+            }
+        }
+
         $this->title = "Přihlášení";
     }
 
-    protected function pageBody()
+    protected function pageBody() :string
     {
-        return "Hello World!!!";
+        return "<form method='post'>
+                    Jméno: <input type='text' name='login' value='$this->login'/><br />
+                    Heslo: <input type='password' name='password'/><br />
+                    <input type='submit' value='Submit' />
+                </form>";
+    }
+
+    protected function pageHeader(): string
+    {
+        return "<a href='index.php'>Zpět na hlavní stránku</a>";
     }
 
 }
-
-//  TODO login
-
-//$name = filter_input(INPUT_POST,'name');
-//$pass = filter_input(INPUT_POST,'password');
-//
-//if($name !== null && $pass !== null){
-//    require_once "inc/users.inc.php";
-//    foreach ($users as $userID => $user){
-//        if($user['name'] === $name && $user['pass'] === $pass){
-//            session_start();
-//            $_SESSION['user'] = $userID;
-//            header("Location: home.php");
-//            exit;
-//        }
-//    }
-//}
-
-
-
 
 $page = new LoginPage();
 $page->render();
