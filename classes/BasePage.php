@@ -2,8 +2,9 @@
 
 abstract class BasePage
 {
-    protected string $title = "";
-    protected string $status = "";
+    protected ?string $title = null;
+    protected ?string $status = null;
+    protected $user;
 
     protected function prepare() : void
     {}
@@ -19,7 +20,7 @@ abstract class BasePage
     protected function pageHeader() : string
     {
         $m = MustacheProvider::get();
-        return $m->render('header',['logged' => $this->status !== "unauthorized"]);
+        return $m->render('header',['logged' => $this->status !== "unauthorized"]); //TODO display user name
     }
 
     abstract protected function pageBody();
@@ -38,16 +39,14 @@ abstract class BasePage
             //mam uzivatele?
             if(!isset($_SESSION['user'])){
                 //neprihlaseno
-                $status = "unauthorized";
+                $this->status = "unauthorized";
                 http_response_code(401);
             }else{
                 $userLogin = $_SESSION['user'];
-//                require_once "inc/users.inc.php";
-//                $user = $users[$userLogin];
-                var_dump($_SESSION['user']);
-                $status = "OK";
+                //$this->user = ['name' => $_SESSION->name, 'surname' => $_SESSION->surname, 'admin' => $_SESSION->admin];
+                $this->user =
+                $this->status = "OK";
             }
-            var_dump($status);
 
             $this->prepare();
             $this->sendHttpHeaders();

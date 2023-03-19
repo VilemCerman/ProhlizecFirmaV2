@@ -11,20 +11,38 @@ class LoginPage extends BasePage
         $this->pass = filter_input(INPUT_POST,'password');
 
         if($this->login !== null && $this->pass !== null){
-            $stmt = PDOProvider::get()->prepare("SELECT login, password AS pass FROM employee WHERE login = :userLogin");
+            $stmt = PDOProvider::get()->prepare("SELECT name, surname, admin, login, password AS pass FROM employee WHERE login = :userLogin");
             $stmt->execute(['userLogin' => $this->login]);
             $user = $stmt->fetch();
             //if($user['login'] === $this->login && password_verify($this->pass,$user['hash'])){
 
             if($this->pass === $user->pass){
+                session_abort();
                 session_start();
                 $_SESSION['user'] = $user->login;
-                var_dump($user->login);
+                $_SESSION['admin'] = $user->admin;
                 header("Location: index.php");
             }
         }
 
         $this->title = "Přihlášení";
+    }
+
+    public function render(): void
+    {
+        $this->prepare();
+        $this->sendHttpHeaders();
+
+        $m = MustacheProvider::get();
+        $data = [
+            'lang' => AppConfig::get('app.lang'),
+            'title' => $this->title,
+            'pageHeader' => $this->pageHeader(),
+            'pageBody' => $this->pageBody(),
+            'pageFooter' => $this->pageFooter()
+        ];
+
+        echo $m->render("page", $data);
     }
 
     protected function pageBody() :string
