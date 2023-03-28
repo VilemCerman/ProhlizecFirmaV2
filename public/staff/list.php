@@ -33,11 +33,11 @@ class EmployeesPage extends CRUDPage
             }
             else if ($crudAction === self::ACTION_INSERT)
             {
-                $message = 'Místnost založena úspěšně';
+                $message = 'Zaměstnanec zapsán úspěšně';
             }
             else if ($crudAction === self::ACTION_UPDATE)
             {
-                $message = 'Úprava místnosti byla úspěšná';
+                $message = 'Úprava zaměstnance byla úspěšná';
             }
 
             $this->alert['message'] = $message;
@@ -57,7 +57,7 @@ class EmployeesPage extends CRUDPage
         //získat data
         $employees = Employee::getAll(['name' => 'ASC']);
         //prezentovat data
-        $html .= MustacheProvider::get()->render('employeeList',['employees' => $employees]);
+        $html .= MustacheProvider::get()->render('employeeList',['employees' => $employees, 'notAdmin' => !$this->user->admin]);
 
         return $html;
     }

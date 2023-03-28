@@ -4,7 +4,7 @@ abstract class BasePage
 {
     protected ?string $title = null;
     protected ?string $status = null;
-    protected $user;
+    protected Employee $user;
 
     protected function prepare() : void
     {}
@@ -20,7 +20,7 @@ abstract class BasePage
     protected function pageHeader() : string
     {
         $m = MustacheProvider::get();
-        return $m->render('header',['logged' => $this->status !== "unauthorized"]); //TODO display user name
+        return $m->render('header',['logged' => $this->status !== "unauthorized", 'fullName' => $this->user->name.' '.$this->user->surname]); //TODO display user name
     }
 
     abstract protected function pageBody();
@@ -35,33 +35,41 @@ abstract class BasePage
     {
         try
         {
-            session_start();
+            if(!isset($_SESSION))
+                session_start();
+            $this->prepare();
             //mam uzivatele?
             if(!isset($_SESSION['user'])){
                 //neprihlaseno
                 $this->status = "unauthorized";
                 http_response_code(401);
-            }else{
+
+                header("Location: /login.php");
+
+                $data = [
+                    'lang' => AppConfig::get('app.lang'),
+                    'title' => 'Přihlaste se prosím',
+                    'pageHeader' => 'Pro přístup k databázi je potřeba se přihlásit',
+                    'pageBody' => '',
+                    'pageFooter' => ''
+                ];
+
+            }else {
                 $userLogin = $_SESSION['user'];
                 //$this->user = ['name' => $_SESSION->name, 'surname' => $_SESSION->surname, 'admin' => $_SESSION->admin];
-                $this->user =
+                $this->user = Employee::findByID($_SESSION['id']);
                 $this->status = "OK";
+
+                $data = [
+                    'lang' => AppConfig::get('app.lang'),
+                    'title' => $this->title,
+                    'pageHeader' => $this->pageHeader(),
+                    'pageBody' => $this->pageBody(),
+                    'pageFooter' => $this->pageFooter()
+                ];
             }
-
-            $this->prepare();
             $this->sendHttpHeaders();
-
             $m = MustacheProvider::get();
-            $data = [
-                'lang' => AppConfig::get('app.lang'),
-                'title' => $this->title,
-                'pageHeader' => $this->pageHeader(),
-                'pageBody' => $this->pageBody(),
-                'pageFooter' => $this->pageFooter()
-            ];
-
-
-
             echo $m->render("page", $data);
         }
 
@@ -74,7 +82,7 @@ abstract class BasePage
 
         catch (Exception $e)
         {
-            if (AppConfig::get('debug'))
+//            if (AppConfig::get('debug'))
                 throw $e;
 
             $e = new BaseException("Server error", 500);

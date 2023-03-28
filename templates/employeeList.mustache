@@ -19,14 +19,28 @@
         <td>{{room}}</td>
 <!--        <td>{{#phone}}{{phone}}{{/phone}}{{^phone}}&mdash;{{/phone}}</td>-->
         <td>
-            <form action="update.php" method="get" style="display: inline-block"> <!-- TODO potreba admin prava k editaci a delete -->
-                <input type="hidden" name="employeeId" value="{{employee_id}}">
-                <input type="submit" value="Upravit" class="btn btn-info">
-            </form>
-            <form action="delete.php" method="post" style="display: inline-block">
-                <input type="hidden" name="employeeId" value="{{employee_id}}">
-                <input type="submit" value="Smazat" class="btn btn-danger" onclick="return confirm('Opravdu chcete smazat zaměstnance?\nAkce je nevratná!');">
-            </form>
+            {{#notAdmin}}
+                <form action="update.php" method="get" style="display: inline-block">
+                    <input type="hidden" name="employeeId" value="{{employee_id}}" disabled>
+                    <input type="submit" value="Upravit" class="btn btn-info" disabled>
+                </form>
+                <form action="delete.php" method="post" style="display: inline-block">
+                    <input type="hidden" name="employeeId" value="{{employee_id}}" disabled>
+                    <input type="submit" value="Smazat" class="btn btn-danger" onclick="return confirm('Opravdu chcete smazat zaměstnance?\nAkce je nevratná!');" disabled>
+                </form>
+            {{/notAdmin}}
+            {{^notAdmin}}
+                <form action="update.php" method="get" style="display: inline-block">
+                    <input type="hidden" name="employeeId" value="{{employee_id}}">
+                    <input type="submit" value="Upravit" class="btn btn-info">
+                </form>
+                <form action="delete.php" method="post" style="display: inline-block">
+                    <input type="hidden" name="employeeId" value="{{employee_id}}">
+                    <input type="submit" value="Smazat" class="btn btn-danger" onclick="return confirm('Opravdu chcete smazat zaměstnance?\nAkce je nevratná!');">
+                </form>
+            {{/notAdmin}}
+
+
         </td>
     </tr>
     {{/employees}}

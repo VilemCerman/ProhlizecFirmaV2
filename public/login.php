@@ -11,7 +11,7 @@ class LoginPage extends BasePage
         $this->pass = filter_input(INPUT_POST,'password');
 
         if($this->login !== null && $this->pass !== null){
-            $stmt = PDOProvider::get()->prepare("SELECT name, surname, admin, login, password AS pass FROM employee WHERE login = :userLogin");
+            $stmt = PDOProvider::get()->prepare("SELECT employee_id, name, surname, admin, login, password AS pass FROM employee WHERE login = :userLogin");
             $stmt->execute(['userLogin' => $this->login]);
             $user = $stmt->fetch();
             //if($user['login'] === $this->login && password_verify($this->pass,$user['hash'])){
@@ -21,6 +21,7 @@ class LoginPage extends BasePage
                 session_start();
                 $_SESSION['user'] = $user->login;
                 $_SESSION['admin'] = $user->admin;
+                $_SESSION['id'] = $user->employee_id;
                 header("Location: index.php");
             }
         }
@@ -47,7 +48,8 @@ class LoginPage extends BasePage
 
     protected function pageBody() :string
     {
-        return "<form method='post'>
+        return "<a href='index.php'>Zpět na hlavní stránku</a>
+                <form method='post'>
                     Jméno: <input type='text' name='login' value='$this->login'/><br />
                     Heslo: <input type='password' name='password'/><br />
                     <input type='submit' value='Submit' />
@@ -56,7 +58,7 @@ class LoginPage extends BasePage
 
     protected function pageHeader(): string
     {
-        return "<a href='index.php'>Zpět na hlavní stránku</a>";
+        return "<h1>Pro přístup k databázi je potřeba se přihlásit</h1>";
     }
 
 }

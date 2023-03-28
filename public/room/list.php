@@ -57,7 +57,7 @@ class RoomsPage extends CRUDPage
         //získat data
         $rooms = Room::getAll(['name' => 'ASC']);
         //prezentovat data
-        $html .= MustacheProvider::get()->render('roomList',['rooms' => $rooms]);
+        $html .= MustacheProvider::get()->render('roomList',['rooms' => $rooms, 'notAdmin' => !$this->user->admin]);
 
         return $html;
     }

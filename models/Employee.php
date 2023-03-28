@@ -108,9 +108,9 @@ class Employee
 
     public function insert() : bool
     {
-        $query = "INSERT INTO ".self::DB_TABLE." (`name`, `surname`, `job`, `wage`, `room`, `login`, `password`, `admin`) VALUES (:name, :surname, :job, :wage, :room, : login, :pass, :admin)";
+        $query = "INSERT INTO ".self::DB_TABLE." (`name`, `surname`, `job`, `wage`, `room`, `login`, `password`, `admin`) VALUES (:name, :surname, :job, :wage, :room, :login, 1234, 0)";
         $stmt = PDOProvider::get()->prepare($query);
-        $result = $stmt->execute(['name'=>$this->name, 'surname'=>$this->surname, 'job'=>$this->job, 'wage'=>$this->wage, 'room'=>$this->room, 'login'=>$this->login, 'password'=>$this->password, 'admin'=>$this->admin]);
+        $result = $stmt->execute(['name'=>$this->name, 'surname'=>$this->surname, 'job'=>$this->job, 'wage'=>$this->wage, 'room'=>$this->room, 'login'=>$this->login]);
         if (!$result)
             return false;
 
@@ -123,9 +123,15 @@ class Employee
         if (!isset($this->employee_id) || !$this->employee_id)
             throw new Exception("Cannot update model without ID");
 
-        $query = "UPDATE ".self::DB_TABLE." SET `name` = :name, `surname` = :surname, `job` = :job, `wage` = :wage, `room` = :room, `login` = :login, `password` = :password, `admin` = :admin WHERE `employee_id` = :employeeId";
+        $query = "UPDATE ".Employee::DB_TABLE." SET `name` = :name, `surname` = :surname, `job` = :job, `wage` = :wage, `room` = :room WHERE `employee_id` = :employeeId";
         $stmt = PDOProvider::get()->prepare($query);
-        return $stmt->execute(['employeeId'=>$this->employee_id, 'name'=>$this->name, 'surname'=>$this->surname, 'job'=>$this->job, 'wage'=>$this->wage, 'room'=>$this->room, 'login'=>$this->login, 'password'=>$this->password, 'admin'=>$this->admin]);
+        return $stmt->execute([
+            'employeeId'=>$this->employee_id,
+            'name'=>$this->name,
+            'surname'=>$this->surname,
+            'job'=>$this->job,
+            'wage'=>$this->wage,
+            'room'=>$this->room]);
     }
 
     public function delete() : bool
@@ -157,15 +163,6 @@ class Employee
         if (!isset($this->room) || (!$this->room))
             $errors['room'] = 'Číslo místnosti musí být vyplněno';
 
-//        if (!isset($this->login) || (!$this->login))
-//            $errors['login'] = 'Číslo musí být vyplněno';
-//
-//        if (!isset($this->pass) || (!$this->pass))
-//            $errors['pass'] = 'Číslo musí být vyplněno';
-//
-//        if (!isset($this->admin) || (!$this->admin))
-//            $errors['admin'] = 'Číslo musí být vyplněno';
-
         return count($errors) === 0;
     }
 
@@ -178,15 +175,22 @@ class Employee
         if ($employee->name)
             $employee->name = trim($employee->name);
 
-        $employee->no = filter_input(INPUT_POST, 'no');
-        if ($employee->no)
-            $employee->no = trim($employee->no);
+        $employee->surname = filter_input(INPUT_POST, 'surname');
+        if ($employee->surname)
+            $employee->surname = trim($employee->surname);
 
-        $employee->phone = filter_input(INPUT_POST, 'phone');
-        if ($employee->phone)
-            $employee->phone = trim($employee->phone);
-        if (!$employee->phone)
-            $employee->null;
+        $employee->job = filter_input(INPUT_POST, 'job');
+        if ($employee->job)
+            $employee->job = trim($employee->job);
+
+        $employee->wage = filter_input(INPUT_POST, 'wage');
+        if ($employee->wage)
+            $employee->wage = trim($employee->wage);
+
+        $employee->room = filter_input(INPUT_POST, 'room');
+        if ($employee->room)
+            $employee->room = trim($employee->room);
+
 
         return $employee;
     }

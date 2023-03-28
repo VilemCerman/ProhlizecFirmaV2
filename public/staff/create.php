@@ -1,9 +1,9 @@
 <?php
 require_once __DIR__ . "/../../bootstrap/bootstrap.php";
 
-class RoomCreatePage extends CRUDPage
+class EmployeeCreatePage extends CRUDPage
 {
-    private ?Room $room;
+    private ?Employee $employee;
     private ?array $errors = [];
     private int $state;
 
@@ -11,23 +11,23 @@ class RoomCreatePage extends CRUDPage
     {
         parent::prepare();
         $this->findState();
-        $this->title = "Založit novou místnost";
+        $this->title = "Zapsat nového zaměstnance";
 
         //když chce formulář
         if ($this->state === self::STATE_FORM_REQUESTED)
         {
             //jdi dál
-            $this->room = new Room();
+            $this->employee = new Employee();
         }
 
         //když poslal data
         elseif($this->state === self::STATE_DATA_SENT) {
             //načti je
-            $this->room = Room::readPost();
+            $this->employee = Employee::readPost();
 
             //zkontroluj je, jinak formulář
             $this->errors = [];
-            $isOk = $this->room->validate($this->errors);
+            $isOk = $this->employee->validate($this->errors);
             if (!$isOk)
             {
                 $this->state = self::STATE_FORM_REQUESTED;
@@ -35,7 +35,7 @@ class RoomCreatePage extends CRUDPage
             else
             {
                 //ulož je
-               $success = $this->room->insert();
+               $success = $this->employee->insert();
 
                 //přesměruj
                $this->redirect(self::ACTION_INSERT, $success);
@@ -46,9 +46,9 @@ class RoomCreatePage extends CRUDPage
     protected function pageBody()
     {
         return MustacheProvider::get()->render(
-            'roomForm',
+            'employeeForm',
             [
-                'room' => $this->room,
+                'employee' => $this->employee,
                 'errors' => $this->errors
             ]
         );
@@ -64,7 +64,7 @@ class RoomCreatePage extends CRUDPage
 
 }
 
-$page = new RoomCreatePage();
+$page = new EmployeeCreatePage();
 $page->render();
 
 ?>

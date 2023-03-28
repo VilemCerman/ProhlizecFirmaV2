@@ -56,7 +56,8 @@ class EmployeeUpdatePage extends CRUDPage
             'employeeForm',
             [
                 'employee' => $this->employee,
-                'errors' => $this->errors
+                'errors' => $this->errors,
+                'header' => $this->title.' '.$this->employee->name.' '.$this->employee->surname
             ]
         );
     }

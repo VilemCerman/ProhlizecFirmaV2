@@ -1,19 +1,19 @@
 <?php
 require_once __DIR__ . "/../../bootstrap/bootstrap.php";
 
-class RoomDeletePage extends CRUDPage
+class EmployeeDeletePage extends CRUDPage
 {
 
     protected function prepare(): void
     {
         parent::prepare();
 
-        $roomId = filter_input(INPUT_POST, 'roomId', FILTER_VALIDATE_INT);
-        if (!$roomId)
+        $employeeId = filter_input(INPUT_POST, 'employeeId', FILTER_VALIDATE_INT);
+        if (!$employeeId)
             throw new BadRequestException();
 
         //když poslal data
-        $success = Room::deleteByID($roomId);
+        $success = Employee::deleteByID($employeeId);
 
         //přesměruj
         $this->redirect(self::ACTION_DELETE, $success);
@@ -23,10 +23,8 @@ class RoomDeletePage extends CRUDPage
     {
         return "";
     }
-
 }
 
-$page = new RoomDeletePage();
+$page = new EmployeeDeletePage();
 $page->render();
-
 ?>
