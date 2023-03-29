@@ -1,0 +1,9 @@
+<a href='index.php'>Zpět na hlavní stránku</a>
+<form method='post'>
+    Jméno: <input type='text' name='login' value='{{login}}'/><br />
+    {{#errors.login}}<div class="d-block invalid-feedback">{{errors.login}}</div>{{/errors.login}}
+    Heslo: <input type='password' name='password'/><br />
+    {{#errors.pass}}<div class="d-block invalid-feedback">{{errors.pass}}</div>{{/errors.pass}}
+    {{#errors.invalid}}<div class="d-block invalid-feedback">{{errors.invalid}}</div>{{/errors.invalid}}
+    <input type='submit' value='Submit' />
+</form>
