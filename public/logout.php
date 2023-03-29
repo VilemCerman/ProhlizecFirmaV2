@@ -21,6 +21,7 @@ class LogoutPage extends BasePage
         //session_start();
         unset($_SESSION['user']);
         unset($_SESSION['admin']);
+        unset($_SESSION['id']);
         return "<h1>Odhlášení proběhlo úspěšně</h1>
                 <a href='index.php'>Zpět na hlavní stránku</a>";
     }
