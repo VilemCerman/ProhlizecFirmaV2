@@ -13,7 +13,7 @@ class Employee
     public ?int $wage;
     public ?int $room;
     public ?string $login;
-    public ?string $pass;
+    public ?string $password;
     public ?bool $admin;
 
     /**
@@ -24,10 +24,10 @@ class Employee
      * @param int|null $wage;
      * @param int|null $room;
      * @param string|null $login;
-     * @param string|null $pass;
+     * @param string|null $password;
      * @param bool|null $admin;
      */
-    public function __construct(?int $employee_id = null, ?string $name = null, ?string $surname = null, ?string $job = null, ?int $wage = null, ?int $room = null, ?string $login = null, ?string $pass = null, ?bool $admin = false)
+    public function __construct(?int $employee_id = null, ?string $name = null, ?string $surname = null, ?string $job = null, ?int $wage = null, ?int $room = null, ?string $login = null, ?string $password = null, ?bool $admin = false)
     {
         $this->employee_id = $employee_id;
         $this->name = $name;
@@ -36,7 +36,7 @@ class Employee
         $this->wage = $wage;
         $this->room = $room;
         $this->login = $login;
-        $this->pass = $pass;
+        $this->password = $password;
         $this->admin = $admin;
     }
 
@@ -87,7 +87,7 @@ class Employee
 
     private function hydrate(array|object $data)
     {
-        $fields = ['employee_id', 'name', 'surname', 'job', 'wage', 'room', 'login', 'pass', 'admin'];
+        $fields = ['employee_id', 'name', 'surname', 'job', 'wage', 'room', 'login', 'password', 'admin'];
         if (is_array($data))
         {
             foreach ($fields as $field)
@@ -132,6 +132,18 @@ class Employee
             'job'=>$this->job,
             'wage'=>$this->wage,
             'room'=>$this->room]);
+    }
+
+    public function updatePass() : bool
+    {
+        if (!isset($this->employee_id) || !$this->employee_id)
+            throw new Exception("Cannot update model without ID");
+
+        $query = "UPDATE ".Employee::DB_TABLE." SET `password` = :password WHERE `employee_id` = :employeeId";
+        $stmt = PDOProvider::get()->prepare($query);
+        return $stmt->execute([
+            'employeeId'=>$this->employee_id,
+            'password'=>$this->password,]);
     }
 
     public function delete() : bool

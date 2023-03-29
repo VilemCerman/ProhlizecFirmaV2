@@ -4,34 +4,46 @@ require_once __DIR__ . "/../bootstrap/bootstrap.php";
 class LoginPage extends BasePage
 {
     protected ?string $login = null;
-    protected ?string $pass = null;
-    public function __construct()
+    protected ?string $password = null;
+    private array $errors = [];
+
+    protected function prepare() :void
     {
-        $this->login = filter_input(INPUT_POST,'login');
-        $this->pass = filter_input(INPUT_POST,'password');
+            $this->login = filter_input(INPUT_POST, 'login');
+            $this->password = filter_input(INPUT_POST, 'password');
 
-        if($this->login !== null && $this->pass !== null){
-            $stmt = PDOProvider::get()->prepare("SELECT employee_id, name, surname, admin, login, password AS pass FROM employee WHERE login = :userLogin");
-            $stmt->execute(['userLogin' => $this->login]);
-            $user = $stmt->fetch();
-            //if($user['login'] === $this->login && password_verify($this->pass,$user['hash'])){
+            if ($this->login == null) {
+                $this->errors['login'] = 'Prosím vyplňte své přihlašovací jméno';
+            } else if ($this->password == null) {
+                $this->errors['pass'] = 'Prosím zadejte své heslo';
 
-            if($this->pass === $user->pass){
-                session_abort();
-                session_start();
-                $_SESSION['user'] = $user->login;
-                $_SESSION['admin'] = $user->admin;
-                $_SESSION['id'] = $user->employee_id;
-                header("Location: index.php");
+            } else {
+                $stmt = PDOProvider::get()->prepare("SELECT employee_id, name, surname, admin, login, password FROM employee WHERE login = :userLogin");
+                $stmt->execute(['userLogin' => $this->login]);
+                $user = $stmt->fetch();
+
+                //if($user['login'] === $this->login && password_verify($this->pass,$user['hash'])){
+
+                if (!$user || $this->password !== $user->password) {
+                    $this->errors['invalid'] = 'Jméno nebo heslo není správné';
+                } else {
+                    $_SESSION['user'] = $user->login;
+                    $_SESSION['admin'] = $user->admin;
+                    $_SESSION['id'] = $user->employee_id;
+                    $this->status = 'OK';
+                }
             }
-        }
-
         $this->title = "Přihlášení";
     }
 
     public function render(): void
     {
+        if(!isset($_SESSION))
+            session_start();
         $this->prepare();
+        if(isset($_SESSION['user'])){
+            header("Location: /index.php");
+        }
         $this->sendHttpHeaders();
 
         $m = MustacheProvider::get();
@@ -48,19 +60,13 @@ class LoginPage extends BasePage
 
     protected function pageBody() :string
     {
-        return "<a href='index.php'>Zpět na hlavní stránku</a>
-                <form method='post'>
-                    Jméno: <input type='text' name='login' value='$this->login'/><br />
-                    Heslo: <input type='password' name='password'/><br />
-                    <input type='submit' value='Submit' />
-                </form>";
+        return MustacheProvider::get()->render('login', ['login' => $this->login, 'errors' => $this->errors]);
     }
 
     protected function pageHeader(): string
     {
         return "<h1>Pro přístup k databázi je potřeba se přihlásit</h1>";
     }
-
 }
 
 $page = new LoginPage();
