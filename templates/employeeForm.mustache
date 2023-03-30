@@ -31,10 +31,12 @@
         {{#errors.room}}<div class="d-block invalid-feedback">{{errors.room}}</div>{{/errors.room}}
     </div>
         <div class="form-group">
-            <label for="login">Přihlašovací jméno</label>
-            <input type="text" class="form-control" id="login" name="login" value="{{employee.login}}">
-            <label for="pass">Heslo</label>
-            <input type="password" class="form-control" id="pass" name="pass">
+            {{#create}}
+                <label for="login">Přihlašovací jméno</label>
+                <input type="text" class="form-control" id="login" name="login" value="{{employee.login}}">
+                <label for="pass">Heslo</label>
+                <input type="password" class="form-control" id="pass" name="pass">
+            {{/create}}
             <label for="admin">Je admin</label>
             <input type="checkbox" id="admin" name="admin" value="admin"{{#employee.admin}} checked{{/employee.admin}}>
         </div>
