@@ -1,7 +1,5 @@
 <?php
 
-//namespace models;
-
 class Employee
 {
     public const DB_TABLE = "employee";
@@ -126,7 +124,7 @@ class Employee
         if (!isset($this->employee_id) || !$this->employee_id)
             throw new Exception("Cannot update model without ID");
 
-        $query = "UPDATE ".Employee::DB_TABLE." SET `name` = :name, `surname` = :surname, `job` = :job, `wage` = :wage, `room` = :room WHERE `employee_id` = :employeeId";
+        $query = "UPDATE ".Employee::DB_TABLE." SET `name` = :name, `surname` = :surname, `job` = :job, `wage` = :wage, `room` = :room, `admin` = :admin WHERE `employee_id` = :employeeId";
         $stmt = PDOProvider::get()->prepare($query);
         return $stmt->execute([
             'employeeId'=>$this->employee_id,
@@ -134,7 +132,8 @@ class Employee
             'surname'=>$this->surname,
             'job'=>$this->job,
             'wage'=>$this->wage,
-            'room'=>$this->room]);
+            'room'=>$this->room,
+            'admin'=>$this->admin]);
     }
 
     public function updatePass() : bool
@@ -214,6 +213,10 @@ class Employee
         $employee->login = filter_input(INPUT_POST, 'login');
         if ($employee->login)
             $employee->login = trim($employee->login);
+
+        $employee->admin = filter_input(INPUT_POST, 'admin');
+        if ($employee->admin)
+            $employee->admin = trim($employee->admin);
 
         $pass = filter_input(INPUT_POST,'pass');
         if($pass){
