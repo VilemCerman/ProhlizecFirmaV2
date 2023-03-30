@@ -28,7 +28,8 @@ class EmployeeCreatePage extends CRUDPage
                 $this->rooms[] = [
                     'room_id' => $room->room_id,
                     'no' => $room->no,
-                    'name' => $room->name
+                    'name' => $room->name,
+                    'selected' => $room->room_id == $this->employee->room
                 ];
             }
         }
@@ -50,9 +51,11 @@ class EmployeeCreatePage extends CRUDPage
             {
                 //ulož je
                 $success = $this->employee->insert();
-                foreach ($this->keys AS $room_id){
-                    $key = new Key($room_id, $this->employee->employee_id);
-                    $key->insert();
+                if($this->keys !== null){
+                    foreach ($this->keys AS $room_id){
+                        $key = new Key($room_id, $this->employee->employee_id);
+                        $key->insert();
+                    }
                 }
 
                 //přesměruj
@@ -68,7 +71,8 @@ class EmployeeCreatePage extends CRUDPage
             [
                 'employee' => $this->employee,
                 'errors' => $this->errors,
-                'rooms' => $this->rooms
+                'rooms' => $this->rooms,
+                'create' => true
             ]
         );
     }
