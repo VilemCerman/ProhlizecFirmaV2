@@ -23,7 +23,11 @@ class RoomsPage extends CRUDPage
             ];
 
             $message = '';
-            if ($crudResult === 0)
+            if($crudAction === self::ACTION_DELETE && $crudResult  === 0)
+            {
+                $message = 'Místnost nejde smazat, může to být protože ji mají někteří zaměstnanci jako domovskou';
+            }
+            else if ($crudResult === 0)
             {
                 $message = 'Operace nebyla úspěšná';
             }
