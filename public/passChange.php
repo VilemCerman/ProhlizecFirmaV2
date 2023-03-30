@@ -52,7 +52,7 @@ class passChangePage extends CRUDPage
                 $this->errors['secondNewPass'] = 'Prosím potvrďte své nové heslo';
                 $isOk = false;
             }
-            else if($this->oldPassword !== $this->employee->password )
+            else if(!password_verify($this->oldPassword, $this->employee->hash))
             {
                 $this->errors['oldPass'] = 'Špatné heslo';
                 $isOk = false;
@@ -71,11 +71,12 @@ class passChangePage extends CRUDPage
             else
             {
                 //ulož je
-                $this->employee->password = $this->newPassword;
+                //$this->employee->password = $this->newPassword;
+                $this->employee->hash = password_hash($this->newPassword, PASSWORD_DEFAULT);
                 $success = $this->employee->updatePass();
 
                 //přesměruj
-                $this->redirect(self::ACTION_UPDATE, $success);
+                $this->redirect(self::ACTION_UPDATE_PASS, $success);
             }
         }
     }
