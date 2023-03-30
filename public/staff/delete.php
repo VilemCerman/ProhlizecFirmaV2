@@ -12,9 +12,13 @@ class EmployeeDeletePage extends CRUDPage
         if (!$employeeId)
             throw new BadRequestException();
 
-        //když poslal data
-        $success = Employee::deleteByID($employeeId);
-
+        //když se snaži odstranit sám sebe
+        if($employeeId == $_SESSION['id']){
+            $success = false;
+        }else{
+            //když poslal data
+            $success = Employee::deleteByID($employeeId);
+        }
         //přesměruj
         $this->redirect(self::ACTION_DELETE, $success);
     }
