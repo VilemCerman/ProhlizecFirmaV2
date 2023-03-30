@@ -5,6 +5,7 @@ class LoginPage extends BasePage
 {
     protected ?string $login = null;
     protected ?string $password = null;
+    protected ?string $hash = null;
     private array $errors = [];
 
     protected function prepare() :void
@@ -18,13 +19,13 @@ class LoginPage extends BasePage
                 $this->errors['pass'] = 'Prosím zadejte své heslo';
 
             } else {
-                $stmt = PDOProvider::get()->prepare("SELECT employee_id, name, surname, admin, login, password FROM employee WHERE login = :userLogin");
+                $stmt = PDOProvider::get()->prepare("SELECT employee_id, name, surname, admin, login, hash FROM employee WHERE login = :userLogin");
                 $stmt->execute(['userLogin' => $this->login]);
                 $user = $stmt->fetch();
 
                 //if($user['login'] === $this->login && password_verify($this->pass,$user['hash'])){
-
-                if (!$user || $this->password !== $user->password) {
+                //if (!$user || $this->password !== $user->password) {
+                if(!password_verify($this->password,$user->hash)){
                     $this->errors['invalid'] = 'Jméno nebo heslo není správné';
                 } else {
                     $_SESSION['user'] = $user->login;

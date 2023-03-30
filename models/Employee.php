@@ -15,6 +15,7 @@ class Employee
     public ?string $login;
     public ?string $password;
     public ?bool $admin;
+    public ?string $hash;
 
     /**
      * @param int|null $employee_id
@@ -26,8 +27,9 @@ class Employee
      * @param string|null $login;
      * @param string|null $password;
      * @param bool|null $admin;
+     * @param string|null $hash;
      */
-    public function __construct(?int $employee_id = null, ?string $name = null, ?string $surname = null, ?string $job = null, ?int $wage = null, ?int $room = null, ?string $login = null, ?string $password = null, ?bool $admin = false)
+    public function __construct(?int $employee_id = null, ?string $name = null, ?string $surname = null, ?string $job = null, ?int $wage = null, ?int $room = null, ?string $login = null, ?string $password = null, ?bool $admin = false, ?string $hash = null)
     {
         $this->employee_id = $employee_id;
         $this->name = $name;
@@ -38,6 +40,7 @@ class Employee
         $this->login = $login;
         $this->password = $password;
         $this->admin = $admin;
+        $this->hash = $hash;
     }
 
     public static function findByID(int $id) : ?self
@@ -87,7 +90,7 @@ class Employee
 
     private function hydrate(array|object $data)
     {
-        $fields = ['employee_id', 'name', 'surname', 'job', 'wage', 'room', 'login', 'password', 'admin'];
+        $fields = ['employee_id', 'name', 'surname', 'job', 'wage', 'room', 'login', 'password', 'admin', 'hash'];
         if (is_array($data))
         {
             foreach ($fields as $field)
@@ -108,9 +111,9 @@ class Employee
 
     public function insert() : bool
     {
-        $query = "INSERT INTO ".self::DB_TABLE." (`name`, `surname`, `job`, `wage`, `room`, `login`, `password`, `admin`) VALUES (:name, :surname, :job, :wage, :room, :login, 1234, 0)";
+        $query = "INSERT INTO ".self::DB_TABLE." (`name`, `surname`, `job`, `wage`, `room`, `login`, `hash`, `admin`) VALUES (:name, :surname, :job, :wage, :room, :login, :hash, :admin)";
         $stmt = PDOProvider::get()->prepare($query);
-        $result = $stmt->execute(['name'=>$this->name, 'surname'=>$this->surname, 'job'=>$this->job, 'wage'=>$this->wage, 'room'=>$this->room, 'login'=>$this->login]);
+        $result = $stmt->execute(['name'=>$this->name, 'surname'=>$this->surname, 'job'=>$this->job, 'wage'=>$this->wage, 'room'=>$this->room, 'login'=>$this->login,'hash'=>$this->hash,'admin'=>$this->admin? 1 : 0]);
         if (!$result)
             return false;
 
@@ -139,11 +142,11 @@ class Employee
         if (!isset($this->employee_id) || !$this->employee_id)
             throw new Exception("Cannot update model without ID");
 
-        $query = "UPDATE ".Employee::DB_TABLE." SET `password` = :password WHERE `employee_id` = :employeeId";
+        $query = "UPDATE ".Employee::DB_TABLE." SET `hash` = :hash WHERE `employee_id` = :employeeId";
         $stmt = PDOProvider::get()->prepare($query);
         return $stmt->execute([
             'employeeId'=>$this->employee_id,
-            'password'=>$this->password,]);
+            'hash'=>$this->hash,]);
     }
 
     public function delete() : bool
@@ -208,6 +211,14 @@ class Employee
         if ($employee->room)
             $employee->room = trim($employee->room);
 
+        $employee->login = filter_input(INPUT_POST, 'login');
+        if ($employee->login)
+            $employee->login = trim($employee->login);
+
+        $pass = filter_input(INPUT_POST,'pass');
+        if($pass){
+            $employee->hash = password_hash($pass, PASSWORD_DEFAULT);
+        }
 
         return $employee;
     }
