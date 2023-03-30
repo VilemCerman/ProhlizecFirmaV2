@@ -1,9 +1,10 @@
 <a href='index.php'>Zpět na hlavní stránku</a>
 <form method='post'>
     Zadejte původní heslo: <input type='password' name='oldPassword' required/><br />
-    {{#errors.pass}}<div class="d-block invalid-feedback">{{errors.pass}}</div>{{/errors.pass}}
+    {{#errors.oldPass}}<div class="d-block invalid-feedback">{{errors.oldPass}}</div>{{/errors.oldPass}}
     Nové heslo: <input type='password' name='newPassword' required/><br />
-    Potvrzení hesla: <input type='password' name='secondNewPassword' required/><br />
     {{#errors.newPass}}<div class="d-block invalid-feedback">{{errors.newPass}}</div>{{/errors.newPass}}
+    Potvrzení hesla: <input type='password' name='secondNewPassword' required/><br />
+    {{#errors.secondNewPass}}<div class="d-block invalid-feedback">{{errors.secondNewPass}}</div>{{/errors.secondNewPass}}
     <input type='submit' value='Submit' />
 </form>
