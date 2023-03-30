@@ -8,6 +8,7 @@ abstract class CRUDPage extends BasePage
     public const ACTION_INSERT = "insert";
     public const ACTION_UPDATE = "update";
     public const ACTION_DELETE = "delete";
+    public const ACTION_UPDATE_PASS = "updatePass";
 
     protected function redirect(string $action, bool $success) : void
     {

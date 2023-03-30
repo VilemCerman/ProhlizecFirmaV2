@@ -1,4 +1,4 @@
-<h2>{{header}}</h2><!-- TODO employee form header-->
+<h2>{{header}}</h2>
 <form method="post">
     <div class="form-group">
         <label for="name">Jméno</label>
@@ -21,9 +21,30 @@
         {{#errors.wage}}<div class="d-block invalid-feedback">{{errors.wage}}</div>{{/errors.wage}}
     </div>
     <div class="form-group">
-        <label for="room">Místnost č.</label>
-        <input type="number" class="form-control" id="room" name="room" value="{{employee.room}}">
+        <label for="room">Domovská místnost</label>
+        <select class="form-control" id="room" name="room">
+            {{#rooms}}
+                <option value="{{room_id}}"{{#selected}} selected="selected"{{/selected}}>{{no}} {{name}}</option>
+            {{/rooms}}
+        </select>
+<!--        <input type="number" class="form-control" id="room" name="room" value="{{employee.room}}">-->
         {{#errors.room}}<div class="d-block invalid-feedback">{{errors.room}}</div>{{/errors.room}}
+    </div>
+        <div class="form-group">
+            <label for="login">Přihlašovací jméno</label>
+            <input type="text" class="form-control" id="login" name="login" value="{{employee.login}}">
+            <label for="pass">Heslo</label>
+            <input type="password" class="form-control" id="pass" name="pass">
+            <label for="admin">Je admin</label>
+            <input type="checkbox" id="admin" name="admin" value="admin"{{#employee.admin}} checked{{/employee.admin}}>
+        </div>
+
+    <div class="form-group">
+        <label for="keys">Klíče k místnostem</label><br>
+        {{#rooms}}
+            <input type="checkbox" id="key{{room_id}}" name="keys[{{room_id}}]" value="{{room_id}}" {{#isActive}}checked{{/isActive}}>
+            <label for="keys[{{room_id}}]">{{no}} {{name}}</label><br>
+        {{/rooms}}
     </div>
     {{#employee.employee_id}}<input type="hidden" name="employee_id" value="{{employee.employee_id}}">{{/employee.employee_id}}
 

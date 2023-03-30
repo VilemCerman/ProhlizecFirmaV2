@@ -5,15 +5,14 @@ class Key
     public const DB_TABLE = "key";
 
     public ?int $key_id;
-    public ?int $room_id;
-    public ?int $employee_id;
-    public ?string $room_name;
+    public ?int $employee;
+    public ?int $room;
+    public ?int $room_name;
 
-    public function __construct(?int $key_id = null, ?int $room_id = null, ?int $employee_id = null)
+    public function __construct(?int $room = null, ?int $employee = null)
     {
-        $this->room_id = $room_id;
-        $this->key_id = $key_id;
-        $this->employee_id = $key_id;
+        $this->room = $room;
+        $this->employee = $employee;
     }
 
     public static function findByID(int $id) : ?self
@@ -27,9 +26,36 @@ class Key
         $key = new self();
         $key->hydrate($stmt->fetch());
         $stmt = PDOProvider::get()->prepare("SELECT `name` FROM " . Room::DB_TABLE . " WHERE `room_id` = :roomId");
-        $stmt->execute(['roomId'=> $key->room_id]);
+        $stmt->execute(['roomId'=> $key->room]);
         $key->room_name = $stmt->fetch();
         return $key;
+    }
+
+    public static function getAll($sorting = []) : array
+    {
+        $sortSQL = "";
+        if (count($sorting))
+        {
+            $SQLchunks = [];
+            foreach ($sorting as $field => $direction)
+                $SQLchunks[] = "`{$field}` {$direction}";
+
+            $sortSQL = " ORDER BY " . implode(', ', $SQLchunks);
+        }
+
+        $pdo = PDOProvider::get();
+        $stmt = $pdo->prepare("SELECT * FROM `".self::DB_TABLE."`" . $sortSQL);
+        $stmt->execute([]);
+
+        $keys = [];
+        while ($keyData = $stmt->fetch())
+        {
+            $key = new Key();
+            $key->hydrate($keyData);
+            $keys[] = $key;
+        }
+
+        return $keys;
     }
 
     private function hydrate(array|object $data)
@@ -59,6 +85,12 @@ class Key
         $stmt = PDOProvider::get()->prepare($query);
         return $stmt->execute(['keyId'=>$Id]);
     }
+    public static function deleteByEmployeeAndRoomId(int $employee, int $room) : bool
+    {
+        $query = "DELETE FROM `".self::DB_TABLE."` WHERE `employee` = :employee AND `room` = :room";
+        $stmt = PDOProvider::get()->prepare($query);
+        return $stmt->execute(['employee'=>$employee, 'room' => $room]);
+    }
 
     public function validate(&$errors = []) : bool
     {
@@ -75,25 +107,50 @@ class Key
         if ($key->key_id)
             $key->key_id = trim($key->key_id);
 
-        $key->room_id = filter_input(INPUT_POST, 'room_id', FILTER_VALIDATE_INT);
-        if($key->room_id)
-            $key->room_id = trim($key->room_id);
+        $key->room = filter_input(INPUT_POST, 'room', FILTER_VALIDATE_INT);
+        if($key->room)
+            $key->room = trim($key->room);
 
-        $key->employee_id = filter_input(INPUT_POST, 'employee_id', FILTER_VALIDATE_INT);
-        if($key->employee_id)
-            $key->employee_id = trim($key->employee_id);
+        $key->employee = filter_input(INPUT_POST, 'employee', FILTER_VALIDATE_INT);
+        if($key->employee)
+            $key->employee = trim($key->employee);
+        return $key;
+    }
+
+    public static function readKeysPost() : self
+    {
+        $pdo = PDOProvider::get();
+        $stmt = $pdo->prepare("SELECT * FROM `".self::DB_TABLE."` WHERE ");
+        $stmt->execute([]);
+        $key = new self();
+        $key->key_id = filter_input(INPUT_POST, 'key_id', FILTER_VALIDATE_INT);
+        if ($key->key_id)
+            $key->key_id = trim($key->key_id);
+
+        $key->room = filter_input(INPUT_POST, 'room', FILTER_VALIDATE_INT);
+        if($key->room)
+            $key->room = trim($key->room);
+
+        $key->employee = filter_input(INPUT_POST, 'employee', FILTER_VALIDATE_INT);
+        if($key->employee)
+            $key->employee = trim($key->employee);
         return $key;
     }
 
     public function insert() : bool
     {
-        $query = "INSERT INTO `".self::DB_TABLE."` (`key_id`, `employee`, `room`) VALUES (:keyId, :employee, :room)";
+        $stmt = PDOProvider::get()->prepare("SELECT * FROM `".self::DB_TABLE."` WHERE `employee` = :employee AND `room` = :room");
+        $result = $stmt->fetch();
+        if($result){
+            return false;
+        }
+        $query = "INSERT INTO `".self::DB_TABLE."` (`employee`, `room`) VALUES (:employee, :room)";
         $stmt = PDOProvider::get()->prepare($query);
-        $result = $stmt->execute(['keyId'=>$this->key_id, 'employee'=>$this->employee_id, 'room'=>$this->room_id]);
+        $result = $stmt->execute(['employee'=>$this->employee, 'room'=>$this->room]);
         if (!$result)
             return false;
 
-        $this->room_id = PDOProvider::get()->lastInsertId();
+        $this->room = PDOProvider::get()->lastInsertId();
         return true;
     }
 }

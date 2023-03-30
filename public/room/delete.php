@@ -16,6 +16,7 @@ class RoomDeletePage extends CRUDPage
         //když poslal data
         $success = Room::deleteByID($roomId);
 
+
         //přesměruj
         $this->redirect(self::ACTION_DELETE, $success);
     }
