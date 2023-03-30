@@ -46,7 +46,8 @@ class EmployeeUpdatePage extends CRUDPage
                     'room_id' => $room->room_id,
                     'no' => $room->no,
                     'name' => $room->name,
-                    'isActive' => $active
+                    'isActive' => $active,
+                    'selected' => $room->room_id == $this->employee->room
                 ];
             }
         }
@@ -56,7 +57,6 @@ class EmployeeUpdatePage extends CRUDPage
             //načti je
             $this->employee = Employee::readPost();
             $this->keys = filter_input(INPUT_POST, 'keys',FILTER_DEFAULT, FILTER_REQUIRE_ARRAY);
-            //dump($this->keys);
 
             //zkontroluj je, jinak formulář
             $this->errors = [];
@@ -67,9 +67,7 @@ class EmployeeUpdatePage extends CRUDPage
             }
             else
             {
-                //dump($_POST);
                 $employeeId = $this->employee->employee_id;
-                //ulož je
 
                 $stmtUserKeys = PDOProvider::get()->prepare("SELECT room, key_id FROM `key` WHERE `employee` = :employeeId ORDER BY room ASC");
                 $stmtUserKeys->execute(['employeeId' => $this->employee->employee_id]);
