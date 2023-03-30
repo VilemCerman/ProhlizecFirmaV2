@@ -153,6 +153,11 @@ class Employee
 
     public static function deleteByID(int $employeeId) : bool
     {
+        $stmt = PDOProvider::get()->prepare("SELECT `key_id` FROM `key` WHERE employee = :employeeId");
+        $stmt->execute(['employeeId' => $employeeId]);
+        while($key = $stmt->fetch()){
+            Key::deleteByID($key->key_id);
+        }
         $query = "DELETE FROM `".self::DB_TABLE."` WHERE `employee_id` = :employeeId";
         $stmt = PDOProvider::get()->prepare($query);
         return $stmt->execute(['employeeId'=>$employeeId]);

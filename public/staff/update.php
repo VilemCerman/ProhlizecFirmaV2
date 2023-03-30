@@ -7,7 +7,6 @@ class EmployeeUpdatePage extends CRUDPage
     private ?array $errors = [];
     private int $state;
     private $keys;
-    private $allKeys;
     private $rooms;
 
     protected function prepare(): void
@@ -32,7 +31,7 @@ class EmployeeUpdatePage extends CRUDPage
             $stmt->execute(['employeeId' => $employeeId]);
             //$this->keys = $stmt->fetchAll();
 
-            $stmtRoom = PDOProvider::get()->prepare("SELECT room_id, no, name FROM room ORDER BY room_id ASC");
+            $stmtRoom = PDOProvider::get()->prepare("SELECT room_id, no, name FROM room ORDER BY no ASC");
             $stmtRoom->execute([]);
 
             $keysAvailable = $key = $stmt->fetch();
@@ -89,7 +88,7 @@ class EmployeeUpdatePage extends CRUDPage
                         Key::deleteByID($userKeys[$room->room_id]);
                     }
                     else if(!isset($userKeys[$room->room_id]) && isset($this->keys[$room->room_id])){
-                        $key = new Key(null, $room->room_id, $this->employee->employee_id);
+                        $key = new Key($room->room_id, $this->employee->employee_id);
                         $key->insert();
                     }
                 }

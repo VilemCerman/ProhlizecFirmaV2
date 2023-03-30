@@ -9,11 +9,10 @@ class Key
     public ?int $room;
     public ?int $room_name;
 
-    public function __construct(?int $key_id = null, ?int $room = null, ?int $employee = null)
+    public function __construct(?int $room = null, ?int $employee = null)
     {
-        $this->key_id = $key_id;
-        $this->employee = $employee;
         $this->room = $room;
+        $this->employee = $employee;
     }
 
     public static function findByID(int $id) : ?self
