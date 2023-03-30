@@ -20,7 +20,7 @@ abstract class BasePage
     protected function pageHeader() : string
     {
         $m = MustacheProvider::get();
-        return $m->render('header',['logged' => $this->status !== "unauthorized", 'fullName' => $this->user->name.' '.$this->user->surname]); //TODO display user name
+        return $m->render('header',['logged' => $this->status !== "unauthorized", 'fullName' => $this->user->name.' '.$this->user->surname, 'employee_id' => $this->user->employee_id]);
     }
 
     abstract protected function pageBody();
