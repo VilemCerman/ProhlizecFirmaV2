@@ -1,6 +1,6 @@
 /vendor/
 composer.lock
-./idea/
+/.idea/
 /config/config_local.json
 /config/config_local_server.json
 /config/config_server.json
