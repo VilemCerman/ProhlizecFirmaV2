@@ -176,8 +176,11 @@ class Employee
         if (!isset($this->job) || (!$this->job))
             $errors['job'] = 'Pozice musí být vyplněna';
 
-        if (!isset($this->wage) || (!$this->wage))
+        if (!isset($this->wage))
             $errors['wage'] = 'Plat musí být vyplněn';
+
+        if ($this->wage < 0)
+            $errors['wage'] = 'Nemůžete mít zápornou mzdu';
 
         if (!isset($this->room) || (!$this->room))
             $errors['room'] = 'Číslo místnosti musí být vyplněno';
