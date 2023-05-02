@@ -71,21 +71,16 @@ abstract class BasePage
             $this->sendHttpHeaders();
             $m = MustacheProvider::get();
             echo $m->render("page", $data);
-//            dump($_SESSION);
-//            $this->user = Employee::findByID($_SESSION['id']);
-//            dump($this->user);
         }
-
         catch (BaseException $e)
         {
             $exceptionPage = new ExceptionPage($e);
             $exceptionPage->render();
             exit;
         }
-
         catch (Exception $e)
         {
-//            if (AppConfig::get('debug'))
+            if (AppConfig::get('debug'))
                 throw $e;
 
             $e = new BaseException("Server error", 500);

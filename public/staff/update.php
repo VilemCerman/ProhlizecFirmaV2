@@ -76,7 +76,7 @@ class EmployeeUpdatePage extends CRUDPage
                     $userKeys[$key->room] = $key->key_id;
                 }
 
-                $stmt = PDOProvider::get()->prepare("SELECT * FROM `key` INNER JOIN `room` ON `key`.employee = :employeeId AND `key`.room = `room`.room_id ORDER BY room ASC");
+                //$stmt = PDOProvider::get()->prepare("SELECT * FROM `key` INNER JOIN `room` ON `key`.employee = :employeeId AND `key`.room = `room`.room_id ORDER BY room ASC");
                 //$stmt->execute(['employeeId' => $employeeId]);
 
                 $allRooms = Room::getAll();
@@ -94,7 +94,7 @@ class EmployeeUpdatePage extends CRUDPage
                 $success = $this->employee->update();
 
                 //přesměruj
-                $this->redirect(self::ACTION_UPDATE, $success);
+                $this->redirect(self::ACTION_UPDATE, $success, 'staff');
             }
         }
     }

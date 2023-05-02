@@ -45,7 +45,7 @@ class RoomUpdatePage extends CRUDPage
                $success = $this->room->update();
 
                 //přesměruj
-               $this->redirect(self::ACTION_UPDATE, $success);
+               $this->redirect(self::ACTION_UPDATE, $success, 'room');
             }
         }
     }

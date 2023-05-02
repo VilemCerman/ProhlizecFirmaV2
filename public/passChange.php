@@ -63,7 +63,7 @@ class passChangePage extends CRUDPage
                 $isOk = false;
             }
 
-            echo $isOk;
+            //echo $isOk;
             if (!$isOk)
             {
                 $this->state = self::STATE_FORM_REQUESTED;
@@ -76,18 +76,9 @@ class passChangePage extends CRUDPage
                 $success = $this->employee->updatePass();
 
                 //přesměruj
-                $this->redirect(self::ACTION_UPDATE_PASS, $success);
+                $this->redirect(self::ACTION_UPDATE_PASS, $success, 'pass');
             }
         }
-    }
-    protected function redirect(string $action, bool $success) : void
-    {
-        $data = [
-            'action' => $action,
-            'success' => $success ? 1 : 0
-        ];
-        header('Location: logout.php?' . http_build_query($data) );
-        exit;
     }
 
     private function findState() : void

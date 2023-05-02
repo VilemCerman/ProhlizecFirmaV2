@@ -92,6 +92,10 @@ class Room
 
     public function insert() : bool
     {
+        $stmt = PDOProvider::get()->prepare("SELECT * FROM ".self::DB_TABLE." WHERE  `no` = ".$this->no);
+        if($stmt->fetch())
+            return false;
+
         $query = "INSERT INTO ".self::DB_TABLE." (`name`, `no`, `phone`) VALUES (:name, :no, :phone)";
         $stmt = PDOProvider::get()->prepare($query);
         $result = $stmt->execute(['name'=>$this->name, 'no'=>$this->no, 'phone'=>$this->phone]);

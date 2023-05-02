@@ -3,7 +3,6 @@
 class ExceptionPage extends BasePage
 {
     protected Exception $exception;
-
     /**
      * @param Exception $exception
      */

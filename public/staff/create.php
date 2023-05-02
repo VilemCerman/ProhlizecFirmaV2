@@ -15,23 +15,21 @@ class EmployeeCreatePage extends CRUDPage
         $this->findState();
         $this->title = "Zapsat nového zaměstnance";
 
+        $this->employee = new Employee();
+        $stmtRoom = PDOProvider::get()->prepare("SELECT room_id, no, name FROM room ORDER BY no ASC");
+        $stmtRoom->execute([]);
+        while ($room = $stmtRoom->fetch())
+        {
+            $this->rooms[] = [
+                'room_id' => $room->room_id,
+                'no' => $room->no,
+                'name' => $room->name,
+                'selected' => $room->room_id == $this->employee->room
+            ];
+        }
         //když chce formulář
         if ($this->state === self::STATE_FORM_REQUESTED)
         {
-            //jdi dál
-            $this->employee = new Employee();
-
-            $stmtRoom = PDOProvider::get()->prepare("SELECT room_id, no, name FROM room ORDER BY no ASC");
-            $stmtRoom->execute([]);
-            while ($room = $stmtRoom->fetch())
-            {
-                $this->rooms[] = [
-                    'room_id' => $room->room_id,
-                    'no' => $room->no,
-                    'name' => $room->name,
-                    'selected' => $room->room_id == $this->employee->room
-                ];
-            }
         }
 
         //když poslal data
@@ -59,7 +57,7 @@ class EmployeeCreatePage extends CRUDPage
                 }
 
                 //přesměruj
-               $this->redirect(self::ACTION_INSERT, $success);
+               $this->redirect(self::ACTION_INSERT, $success, 'staff');
             }
         }
     }
