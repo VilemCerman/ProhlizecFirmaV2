@@ -57,7 +57,7 @@ class EmployeeCreatePage extends CRUDPage
                 }
 
                 //přesměruj
-               $this->redirect(self::ACTION_INSERT, $success);
+               $this->redirect(self::ACTION_INSERT, $success, 'staff');
             }
         }
     }

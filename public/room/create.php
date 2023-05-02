@@ -38,7 +38,8 @@ class RoomCreatePage extends CRUDPage
                $success = $this->room->insert();
 
                 //přesměruj
-               $this->redirect(self::ACTION_INSERT, $success);
+                echo 123;
+               $this->redirect(self::ACTION_INSERT, $success, 'room');
             }
         }
     }
